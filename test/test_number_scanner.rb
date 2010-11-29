@@ -20,6 +20,10 @@ STR
       'one million and a half'        => 1_500_000,
       'three million and a half'      => 3_500_000,
       'thirty-seven and five eighths' => 37 + Rational(5, 8),
+      'thirty-seven fifty-eight'      => [37, 58],
+      'one two'                       => [1, 2],
+      'twelve three'                  => [12, 3],
+      'one twenty-three'              => [1, 23]
     }.each do |string, expectation|
       assert_equal expectation, NumberScanner.human_to_number(string)
     end
