@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    scantron (0.0.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    minitest (2.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  minitest
+  scantron!
+
+METADATA
+  version: 1.0.6
