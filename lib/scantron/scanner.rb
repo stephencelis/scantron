@@ -44,7 +44,7 @@ module Scantron
     end
 
     def scan
-      perform.map { |result| result.value }
+      perform.uniq.map { |result| result.value }
     end
 
     def scrub
@@ -73,7 +73,7 @@ module Scantron
         scanner.pos = 0
       end
 
-      results.sort_by { |r| r.pos }.delete_if { |r| r.value == false }
+      results.sort.delete_if { |r| r.value == false }
     end
   end
 end

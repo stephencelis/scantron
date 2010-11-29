@@ -25,8 +25,26 @@ module Scantron
       [offset, length]
     end
 
+    def eql? other
+      pos == other.pos && value == other.value
+    end
+    alias == eql?
+
+    def hash
+      pos.hash ^ value.hash
+    end
+
+    include Comparable
+    def <=> other
+      pos <=> other.pos
+    end
+
     def to_s
       scanner.matched
+    end
+
+    def inspect
+      "#<#{self.class.name} #{to_s.inspect}>"
     end
   end
 end
