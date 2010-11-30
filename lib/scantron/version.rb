@@ -4,6 +4,6 @@ module Scantron
     MINOR = 0
     PATCH = 0
 
-    VERSION = [MAJOR, MINOR, PATCH].compact.join '.'
+    VERSION = [MAJOR, MINOR, PATCH].compact.join('.').freeze
   end
 end
