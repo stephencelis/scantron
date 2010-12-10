@@ -1,8 +1,8 @@
-require 'minitest/autorun'
 require 'scantron'
 require 'range_scanner'
+require 'test/unit'
 
-class TestRangeScanner < MiniTest::Unit::TestCase
+class TestRangeScanner < Test::Unit::TestCase
   def test_scans_shared_company
     { 'one and a half to two' => [Rational(3, 2)..2],
       '1-2'                   => [1..2],

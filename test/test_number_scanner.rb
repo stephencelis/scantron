@@ -1,8 +1,8 @@
-require 'minitest/autorun'
 require 'scantron'
 require 'number_scanner'
+require 'test/unit'
 
-class TestNumberScanner < MiniTest::Unit::TestCase
+class TestNumberScanner < Test::Unit::TestCase
   def test_converts_words_to_numbers
     { <<STR                      => 234_567_890_123_456,
 Two hundred and thirty-four trillion five hundred sixty seven billion eight \

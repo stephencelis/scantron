@@ -1,18 +1,18 @@
 PATH
   remote: .
   specs:
-    scantron (0.0.0)
+    scantron (0.0.1)
 
 GEM
   remote: http://rubygems.org/
   specs:
-    minitest (2.0.0)
+    rdoctest (0.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  minitest
+  rdoctest
   scantron!
 
 METADATA

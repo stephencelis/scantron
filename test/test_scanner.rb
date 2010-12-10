@@ -1,7 +1,6 @@
-require 'minitest/autorun'
 require 'scantron'
 
-class TestScanner < MiniTest::Unit::TestCase
+class TestScanner < Test::Unit::TestCase
   class BogusScanner < Scantron::Scanner
     @default = lambda { |r| :default }
     rule(:test, /\btest\b/) { 1 }

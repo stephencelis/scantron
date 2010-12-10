@@ -54,7 +54,7 @@ class NumberScanner < Scantron::Scanner
   }
 
   words = WORD_MAP.keys.map { |v| v.sub /y$/, 'y-?' } * '|'
-  human = %r{(?:\b(?:#{words}|an?d?)\b ?)+}i
+  human = %r{(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b ?)*}i
   rule :human, human do |r|
     human_to_number r.scanner.matched
   end
@@ -139,11 +139,13 @@ class NumberScanner < Scantron::Scanner
     "#{r.scanner[1]}#{r.scanner[3]}".to_r + r.scanner[2].to_i
   end
 
-  rule :float, %r{(?<!\.|\d|\d/|/\d)[-+]?\d*\.\d+(?![\./]\d)} do |r|
-    r.scanner.matched.to_f
+  int = /\d+(?:,?\d+)*/ # Could be stricter with delimiter matching...
+  pre = %r{(?<![,.]|\d|\d/|/\d)[-+]?}
+  rule :float, %r{#{pre}#{int}?\.\d+(?![,./]\d)} do |r|
+    r.to_s.gsub(/,/, '').to_f
   end
 
-  rule :integer, %r{(?<!\.|\d/|/\d)([-+]?\d+)(?!\d*[\./]\d| ?\d+/\d+)} do |r|
-    r.scanner.matched.to_i
+  rule :integer, %r{#{pre}#{int}(?!#{int}?[,./]\d| ?\d+/\d+)} do |r|
+    r.to_s.gsub(/,/, '').to_i
   end
 end

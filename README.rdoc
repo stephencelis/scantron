@@ -1,0 +1,36 @@
+= Scantron
+
+http://github.com/stephencelis/scantron
+
+A simple, but powerful, rule-based string scanner and scrubber.
+
+
+== Examples
+
+Scantron comes with two scanners.
+
+
+=== NumberScanner
+
+  require "scantron"
+  require "number_scanner"
+
+  NumberScanner.scan "A one, 2, 3.0, 4 1/2..."
+  # => [1, 2, 3.0, (9/2)]
+
+  number_scanner = NumberScanner.new <<HERE
+    Ninety-nine bottles of beer on the wall.
+    Ninety-nine bottles of beer.
+    Take one down, pass it around,
+    Ninety-eight and a half bottles of beer on the wall.
+  HERE
+
+  number_scanner.scan # => [99, 99, 1, (197/2)]
+
+
+=== RangeScanner
+
+  require "scantron"
+  require "range_scanner"
+
+  RangeScanner.scan
