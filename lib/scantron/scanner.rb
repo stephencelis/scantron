@@ -162,7 +162,10 @@ module Scantron
       str
     end
 
-    def perform # :nodoc:
+    # The heart of the scanner. Returns Result instances to scan, scrub, and
+    # parse. Not a class method to discourage direct use outside of a scanner's
+    # implementation.
+    def perform
       scanner = StringScanner.new string
       results = []
 
