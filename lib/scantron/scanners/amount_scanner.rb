@@ -8,14 +8,8 @@ class AmountScanner < Scantron::Scanner
   def perform
     numbers = NumberScanner.new(string).perform
     ranges  = RangeScanner.new(string).perform
-
-    results = if ranges.empty?
-      numbers
-    else
-      numbers.delete_if { |n| ranges.any? { |r| r.pos[1] >= n.pos[1] } }
-      (numbers + ranges).sort
-    end
-
-    results
+    return numbers if ranges.empty?
+    numbers.delete_if { |n| ranges.any? { |r| r.pos[1] >= n.pos[1] } }
+    (numbers + ranges).sort
   end
 end

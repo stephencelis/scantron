@@ -56,7 +56,7 @@ class NumberScanner < Scantron::Scanner
   words = WORD_MAP.keys.map { |v| v.sub /y$/, 'y-?' } * '|'
   human = %r{(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b ?)*}i
   rule :human, human do |r|
-    human_to_number r.scanner.matched
+    human_to_number r.to_s
   end
 
   #-
@@ -136,7 +136,11 @@ class NumberScanner < Scantron::Scanner
   end
 
   rule :rational, %r{([-+])?(\d+ )?(\d*\.?\d+/\d*\.?\d+)} do |r|
-    "#{r.scanner[1]}#{r.scanner[3]}".to_r + r.scanner[2].to_i
+    if r.length != r.scanner.matched_size
+      parse r.to_s
+    else
+      "#{r.scanner[1]}#{r.scanner[3]}".to_r + r.scanner[2].to_i
+    end
   end
 
   int = /\d+(?:,?\d+)*/ # Could be stricter with delimiter matching...

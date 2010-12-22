@@ -25,11 +25,13 @@ module Scantron
   #   html.scrub { |r| r.to_s.swapcase unless r.name == :comment }
   #   # => "<a href='/'>rOOT!</a>"
   class Scanner
-    @default = nil
+    @before = nil
+    @after = nil
     @rules = {}
 
     class << self
-      attr_reader :default
+      attr_reader :before
+      attr_reader :after
       attr_reader :rules
 
       # Scans a string against the rules defined in the class, returning an
@@ -93,11 +95,13 @@ module Scantron
 
       protected
 
-      attr_writer :default
+      attr_writer :before
+      attr_writer :after
       attr_writer :rules
 
       def inherited subclass
-        subclass.default = default
+        subclass.before = before
+        subclass.after = after
         subclass.rules = rules.dup
       end
 
@@ -127,7 +131,15 @@ module Scantron
       #   buts
       #   => ["Ifs", "Ands", "Buts"]
       def rule name, regexp, data = {}, &block
-        rules[name] = Rule.new regexp, data, block || default
+        rules[name] = Rule.new regexp, data, block || after
+      end
+
+      def before_match &block
+        self.before = block
+      end
+
+      def after_match &block
+        self.after = block
       end
     end
 
@@ -171,7 +183,7 @@ module Scantron
 
       self.class.rules.each_pair do |name, rule|
         while scanner.skip_until rule.regexp
-          results << Result.new(name, rule, scanner)
+          results << Result.from(name, rule, scanner, self)
         end
 
         scanner.pos = 0

@@ -37,6 +37,13 @@ module Scantron
   #
   # Also note that calling to_s on the Result will return the matched string.
   class Result
+    class << self
+      def from name, rule, scanner, scantron
+        result = new name, rule, scanner, scantron
+        scantron.class.before ? scantron.class.before.call(result) : result
+      end
+    end
+
     # The name of the rule.
     attr_reader :name
 
@@ -46,20 +53,40 @@ module Scantron
     # The StringScanner instance that matched the rule.
     attr_reader :scanner
 
-    # The value as evaluated by the Rule's block.
-    attr_reader :value
-
+    # Overwrite the length to adjust the length of the matched string returned.
     attr_writer :length
 
+    # Overwrite the offset to adjust the offset of the matched string returned.
     attr_writer :offset
 
-    def initialize name, rule, scanner
-      @name    = name
-      @rule    = rule
-      @scanner = scanner.dup
-      @length  = nil
-      @offset  = nil
-      @value   = rule.block ? rule.block.call(self) : to_s
+    # The Scantron::Scanner instance that created this result.
+    attr_reader :scantron
+
+    # Hash of information to write to and read from.
+    attr_reader :data
+
+    def initialize name, rule, scanner, scantron
+      @name     = name
+      @rule     = rule
+      @scanner  = scanner.dup
+      @length   = nil
+      @offset   = nil
+      @value    = nil
+      @data     = {}
+      @scantron = scantron
+    end
+
+    # The value as evaluated by the Rule's block (or Scanner's after_match).
+    def value
+      @value ||= rule.block ? rule.block.call(self) : to_s
+    end
+
+    def [] key
+      data[key]
+    end
+
+    def []= key, value
+      data[key] = value
     end
 
     def length
@@ -67,8 +94,18 @@ module Scantron
     end
     alias size length
 
+    def length= length
+      @value = nil
+      @length = length
+    end
+
     def offset
-      @offset || scanner.pos - length
+      @offset || scanner.pos - scanner.matched_size
+    end
+
+    def offset= offset
+      @value = nil
+      @offset = offset
     end
 
     def pos
@@ -89,8 +126,19 @@ module Scantron
       pos <=> other.pos
     end
 
+    def pre_match
+      return scanner.pre_match if @offset.nil?
+      scanner.string[0, offset]
+    end
+
+    def post_match
+      return scanner.post_match if @length.nil? && @offset.nil?
+      scanner.string[offset + length, scanner.string.length]
+    end
+
     def to_s
-      scanner.matched
+      return scanner.matched if @length.nil? && @offset.nil?
+      scanner.string[offset, length]
     end
 
     def inspect

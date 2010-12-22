@@ -2,7 +2,7 @@ require 'scantron'
 
 class TestScanner < Test::Unit::TestCase
   class BogusScanner < Scantron::Scanner
-    @default = lambda { |r| :default }
+    after_match { |r| :default }
     rule(:test, /\btest\b/) { 1 }
     rule(:tests, /\btests\b/) { |r| "#{r}" }
     rule :testing, /,.+$/
