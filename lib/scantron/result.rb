@@ -123,7 +123,7 @@ module Scantron
 
     include Comparable
     def <=> other
-      pos <=> other.pos
+      [offset, -length] <=> [other.offset, -other.length]
     end
 
     def pre_match

@@ -24,6 +24,8 @@ A simple, but powerful, rule-based string scanner and scrubber.
 
   number_scanner.scan # => [99, 99, 1, (197/2)]
 
+TODO: Scrubbing
+
 
 ==== RangeScanner
 
@@ -44,7 +46,11 @@ TODO
 
 == Install
 
-TODO
+  % [sudo] gem install scantron
+
+
+Or, with {Bundler}[http://gembundler.com/], add <tt>gem "scantron"</tt> to your
+Gemfile and run <tt>bundle install</tt>.
 
 
 == License

@@ -114,8 +114,8 @@ class NumberScanner < Scantron::Scanner
             total = 0
             limit = n
           elsif !reset && limit == 1 && n > numbers[i + 1].to_i &&
-            m = [limit, n + numbers[i + 1]].sort and
-            !m[1].to_s[-(m[0].to_i.to_s.size), m[0].to_i.to_s.size].to_i.zero?
+            m = [limit, n + numbers[i + 1].to_i].sort and
+              !m[1].to_s[-(m[0].to_i.to_s.size), m[0].to_i.to_s.size].to_i.zero?
 
             array << total + limit
             total = 0

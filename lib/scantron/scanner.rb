@@ -177,7 +177,7 @@ module Scantron
     # The heart of the scanner. Returns Result instances to scan, scrub, and
     # parse. Not a class method to discourage direct use outside of a scanner's
     # implementation.
-    def perform
+    def perform return_overlapping = false
       scanner = StringScanner.new string
       results = []
 
@@ -189,7 +189,23 @@ module Scantron
         scanner.pos = 0
       end
 
-      results.sort.delete_if { |r| r.value == false }
+      results.sort!
+      remove_overlapping results unless return_overlapping
+      results.compact.reject { |r| r.value == false }
+    end
+
+    private
+
+    def remove_overlapping results
+      prev = nil
+
+      results.each.with_index do |r, i|
+        if prev && r.offset < prev.offset + prev.length
+          results[i] = nil if prev.length >= r.length
+        end
+
+        prev = r
+      end
     end
   end
 end
