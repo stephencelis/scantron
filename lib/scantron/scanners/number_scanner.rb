@@ -135,6 +135,18 @@ class NumberScanner < Scantron::Scanner
     end
   end
 
+  # Only covers whole numbers from "zero" to "ninety-nine".
+  def self.number_to_human number
+    return number unless number >= 0 && number < 100
+    inverted_word_map = WORD_MAP.invert
+    return inverted_word_map[number].dup if number < 20 || (number % 10).zero?
+
+    human = []
+    human.unshift inverted_word_map[remainder = number % 10]
+    human.unshift inverted_word_map[number - remainder]
+    human.join '-'
+  end
+
   rule :rational, %r{([-+])?(\d+ )?(\d*\.?\d+/\d*\.?\d+)} do |r|
     if r.length != r.scanner.matched_size
       parse r.to_s
