@@ -22,6 +22,7 @@ class TestScanner < Test::Unit::TestCase
 
   def test_should_scrub
     assert_equal "and  the ", @scanner.scrub
+  end
 
   def test_should_scrub_multibyte
     require 'amount_scanner'
