@@ -3,6 +3,9 @@ require 'scantron/result'
 require 'scantron/rule'
 
 module Scantron
+  class Error < StandardError
+  end
+
   # Scantron::Scanner is meant to be inherited from. It provides functionality
   # above and beyond StringScanner.
   #
@@ -183,6 +186,9 @@ module Scantron
 
       self.class.rules.each_pair do |name, rule|
         while scanner.skip_until rule.regexp
+          if scanner.matched.empty?
+            raise Error, "#{self.class}:#{name} matched nothing"
+          end
           results << Result.from(name, rule, scanner, self)
         end
 
