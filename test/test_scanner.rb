@@ -1,4 +1,7 @@
+# encoding: utf-8
+
 require 'scantron'
+require 'test/unit'
 
 class TestScanner < Test::Unit::TestCase
   class BogusScanner < Scantron::Scanner
@@ -20,10 +23,11 @@ class TestScanner < Test::Unit::TestCase
   def test_should_scrub
     assert_equal "and  the ", @scanner.scrub
 
-    assert_equal %(and <i id="1">test</i> the <i id="tests">tests</i>),
-      @scanner.scrub { |r|
-        %(<i id="#{r.value}">#{r}</i>) unless r.value == :default
-      }
-    assert_equal 'and', BogusScanner.scrub('and')
+  def test_should_scrub_multibyte
+    require 'amount_scanner'
+    scanner = AmountScanner.new(
+      "One or two cafés later, a 3-part, 2 1/2 scored 4.5"
+    )
+    assert_equal " cafés later, a -part,  scored ", scanner.scrub
   end
 end

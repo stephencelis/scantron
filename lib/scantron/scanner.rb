@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'strscan'
 require 'scantron/result'
 require 'scantron/rule'
@@ -150,7 +152,7 @@ module Scantron
 
     def initialize string
       super
-      @string = string
+      @string = string.dup
     end
 
     # See Scantron::Scanner.scan. The instance method analog.
@@ -164,17 +166,39 @@ module Scantron
       result.value if result
     end
 
+    ##
+    # :method: scrub
+    #
     # See Scantron::Scanner.scrub. The instance method analog.
-    def scrub
-      str = string.dup
+    if RUBY_VERSION >= '1.9'
+      def scrub
+        orig_encoding = string.encoding
+        string.force_encoding 'ASCII-8BIT'
+        str = string.dup
 
-      perform.reverse.each do |result|
-        pos = result.pos
-        sub = yield result if block_given?
-        str[*pos] = sub.to_s if str[*pos] == string[*pos]
+        perform.reverse.each do |result|
+          sub = yield result if block_given?
+          sub = sub.to_s.force_encoding 'ASCII-8BIT'
+          pos = result.pos
+          str[*pos] = sub.to_s if str[*pos] == string[*pos]
+        end
+
+        str.force_encoding orig_encoding
+      ensure
+        string.force_encoding orig_encoding
       end
+    else
+      def scrub
+        str = string.dup
 
-      str
+        perform.reverse.each do |result|
+          sub = yield result if block_given?
+          pos = result.pos
+          str[*pos] = sub.to_s if str[*pos] == string[*pos]
+        end
+
+        str
+      end
     end
 
     # The heart of the scanner. Returns Result instances to scan, scrub, and
