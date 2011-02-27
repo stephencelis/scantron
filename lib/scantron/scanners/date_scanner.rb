@@ -2,15 +2,14 @@ require 'scantron'
 require 'date'
 
 class DateScanner < Scantron::Scanner
-  days    = Date::DAYNAMES
-  days   += Date::ABBR_DAYNAMES.compact.map { |name| "#{name}.?" }
-  days    = days * '|'
+  days    = Date::DAYNAMES * '|'
+  days   << "|(?:#{Date::ABBR_DAYNAMES * '|'})\\b\\.?"
 
-  months  = Date::MONTHNAMES.compact
-  months += Date::ABBR_MONTHNAMES.compact.map { |name| "#{name}.?" }
-  months  = months * '|'
+  months  = Date::MONTHNAMES.compact * '|'
+  months << "|(?:#{Date::ABBR_MONTHNAMES.compact * '|'})\\b\\.?"
 
-  rule :human, /(?:#{days},? )?(#{months})( \d{1,2}\b,?)?( \d{2,4})?/i do |r|
+  human = /\b(?:(#{days}),? )?\b(#{months})( \d{1,2}\b,?)?( \d{2,4})?/i
+  rule :human, human do |r|
     Date.parse r.to_s
   end
 
