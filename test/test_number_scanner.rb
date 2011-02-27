@@ -23,7 +23,8 @@ STR
       'thirty-seven fifty-eight'      => [37, 58],
       'one two'                       => [1, 2],
       'twelve three'                  => [12, 3],
-      'one twenty-three'              => [1, 23]
+      'one twenty-three'              => [1, 23],
+      'a couple dozen'                => 24
     }.each do |string, expectation|
       assert_equal expectation, NumberScanner.human_to_number(string)
     end

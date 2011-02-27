@@ -1,13 +1,14 @@
 class NumberScanner < Scantron::Scanner
   WORD_MAP = {
-    'trillion'  => 1_000_000_000_000,
     'trillions' => 1_000_000_000_000,
-    'billion'   => 1_000_000_000,
+    'trillion'  => 1_000_000_000_000,
     'billions'  => 1_000_000_000,
-    'million'   => 1_000_000,
+    'billion'   => 1_000_000_000,
     'millions'  => 1_000_000,
-    'thousand'  => 1_000,
+    'million'   => 1_000_000,
     'thousands' => 1_000,
+    'thousand'  => 1_000,
+    'hundreds'  => 100,
     'hundred'   => 100,
     'ninety'    => 90,
     'eighty'    => 80,
@@ -24,7 +25,7 @@ class NumberScanner < Scantron::Scanner
     'fifteen'   => 15,
     'fourteen'  => 14,
     'thirteen'  => 13,
-    # 'dozen'     => 12,
+    'dozen'     => 12,
     'twelve'    => 12,
     'eleven'    => 11,
     'ten'       => 10,
@@ -35,28 +36,28 @@ class NumberScanner < Scantron::Scanner
     'five'      => 5,
     'four'      => 4,
     'three'     => 3,
-    # 'couple'    => 2,
+    'couple'    => 2,
     'two'       => 2,
     'one'       => 1,
-    'half'      => Rational(1, 2),
     'halves'    => Rational(1, 2),
-    'third'     => Rational(1, 3),
+    'half'      => Rational(1, 2),
     'thirds'    => Rational(1, 3),
-    'fourth'    => Rational(1, 4),
+    'third'     => Rational(1, 3),
     'fourths'   => Rational(1, 4),
-    'fifth'     => Rational(1, 5),
+    'fourth'    => Rational(1, 4),
     'fifths'    => Rational(1, 5),
-    'sixth'     => Rational(1, 6),
+    'fifth'     => Rational(1, 5),
     'sixths'    => Rational(1, 6),
-    'seventh'   => Rational(1, 7),
+    'sixth'     => Rational(1, 6),
     'sevenths'  => Rational(1, 7),
-    'eighth'    => Rational(1, 8),
+    'seventh'   => Rational(1, 7),
     'eighths'   => Rational(1, 8),
+    'eighth'    => Rational(1, 8),
     'zero'      => 0
   }
 
   words = WORD_MAP.keys.map { |v| v.sub /y$/, 'y-?' } * '|'
-  human = %r{(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b ?)*}i
+  human = %r{(?:a )?(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b ?)*}i
   rule :human, human do |r|
     human_to_number r.to_s
   end
@@ -64,12 +65,13 @@ class NumberScanner < Scantron::Scanner
   #-
   # This catches, perhaps, too many edge cases. Simplify.
   #+
-  def self.human_to_number words
-    numbers = words.split(/\W+/).map { |w| WORD_MAP[w.downcase] || w }
+  def self.human_to_number input
+    input   = input.split /\W+/
+    numbers = input.map { |w| WORD_MAP[w.downcase] || w }
 
     case numbers.count { |n| n.is_a? Numeric }
       when 0 then false
-      when 1 then numbers[0]
+      when 1 then numbers.find { |n| n.is_a? Numeric }
     else
       array = []
       total = 0
@@ -112,9 +114,13 @@ class NumberScanner < Scantron::Scanner
             m = [limit, m1].sort and
             !m[1].to_s[-(m0 = m[0].to_i.to_s.size), m0].to_i.zero?
 
-            array << total + limit
-            total = 0
-            limit = n
+            if limit == 2 && input[i] == 'dozen'
+              limit *= n
+            else
+              array << total + limit
+              total = 0
+              limit = n
+            end
           elsif !reset && limit == 1 && n > numbers[i + 1].to_i &&
             m = [limit, n + numbers[i + 1].to_i].sort and
               !m[1].to_s[-(m[0].to_i.to_s.size), m[0].to_i.to_s.size].to_i.zero?
