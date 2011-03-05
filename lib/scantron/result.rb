@@ -53,12 +53,6 @@ module Scantron
     # The StringScanner instance that matched the rule.
     attr_reader :scanner
 
-    # Overwrite the length to adjust the length of the matched string returned.
-    attr_writer :length
-
-    # Overwrite the offset to adjust the offset of the matched string returned.
-    attr_writer :offset
-
     # The Scantron::Scanner instance that created this result.
     attr_reader :scantron
 
@@ -94,6 +88,7 @@ module Scantron
     end
     alias size length
 
+    # Overwrite the length to adjust the length of the matched string returned.
     def length= length
       @value = nil
       @length = length
@@ -103,6 +98,7 @@ module Scantron
       @offset || scanner.pos - scanner.matched_size
     end
 
+    # Overwrite the offset to adjust the offset of the matched string returned.
     def offset= offset
       @value = nil
       @offset = offset

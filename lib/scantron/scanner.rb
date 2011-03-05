@@ -95,7 +95,7 @@ module Scantron
       #   end
       #   # => "And <span data-value='1'>one</span> more thing..."
       def scrub string, &block
-        new(string).scrub &block
+        new(string).scrub(&block)
       end
 
       protected
@@ -162,7 +162,7 @@ module Scantron
 
     # See Scantron::Scanner.parse. The instance method analog.
     def parse
-      result = perform.find { |result| result.offset == 0 }
+      result = perform.find { |r| r.offset == 0 }
       result.value if result
     end
 

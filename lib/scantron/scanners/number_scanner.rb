@@ -56,7 +56,7 @@ class NumberScanner < Scantron::Scanner
     'zero'      => 0
   }
 
-  words = WORD_MAP.keys.map { |v| v.sub /y$/, 'y-?' } * '|'
+  words = WORD_MAP.keys.map { |v| v.sub(/y$/, 'y-?') } * '|'
   human = %r{(?:a )?(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b ?)*}i
   rule :human, human do |r|
     human_to_number r.to_s
@@ -66,7 +66,7 @@ class NumberScanner < Scantron::Scanner
   # This catches, perhaps, too many edge cases. Simplify.
   #+
   def self.human_to_number input
-    input   = input.split /\W+/
+    input   = input.split(/\W+/)
     numbers = input.map { |w| WORD_MAP[w.downcase] || w }
 
     case numbers.count { |n| n.is_a? Numeric }
