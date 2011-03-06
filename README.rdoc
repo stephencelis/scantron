@@ -24,7 +24,11 @@ A simple, but powerful, rule-based string scanner and scrubber.
 
   number_scanner.scan # => [99, 99, 1, (197/2)]
 
-TODO: Scrubbing
+  puts number_scanner.scrub { |n| "<span data-n='#{n.value.to_f}'>#{n}</span>" }
+  <span data-n='99.0'>Ninety-nine</span> bottles of beer on the wall.
+  <span data-n='99.0'>Ninety-nine</span> bottles of beer.
+  Take <span data-n='1.0'>one</span> down, pass it around,
+  <span data-n='98.5'>Ninety-eight and a half</span> bottles of beer on the wall.
 
 
 ==== RangeScanner
