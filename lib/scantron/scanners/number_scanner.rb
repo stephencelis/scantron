@@ -57,7 +57,7 @@ class NumberScanner < Scantron::Scanner
   }
 
   words = WORD_MAP.keys.map { |v| v.sub(/y$/, 'y-?') } * '|'
-  human = %r{(?:a )?(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b ?)*}i
+  human = %r{(?:a )?(?:\b(?:#{words}))(?: ?\b(?:#{words}|an?d?)\b)*}i
   rule :human, human do |r|
     human_to_number r.to_s
   end
