@@ -151,7 +151,6 @@ module Scantron
     attr_reader :string
 
     def initialize string
-      super
       @string = string.dup
     end
 
